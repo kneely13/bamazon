@@ -1,3 +1,3 @@
-CREATE DATABASE bamazondb;
+CREATE DATABASE bamazon_db;
 
-USE bamazondb;
+USE bamazon_db;
