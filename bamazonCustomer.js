@@ -1,3 +1,3 @@
-var inquire = require ('inquirer')
+var inquire = require ('inquirer');
 
-var mysql = require ('mysql')
+var mysql = require ('mysql');
