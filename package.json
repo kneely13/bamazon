@@ -18,5 +18,6 @@
   "homepage": "https://github.com/kneely13/bamazon#readme",
   "dependencies": {
     "inquirer": "^6.2.0"
-  }
+  },
+  "keywords": []
 }
