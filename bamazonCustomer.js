@@ -7,14 +7,14 @@ var connection = mysql.createConnection({
     host: "localhost",
   
     // Your port; if not 3306
-    port: 3300,
+    port: 3000,
   
     // Your username
     user: "root",
   
     // Your password
     password: "",
-    database: "ice_creamDB"
+    database: "bamazon_db"
   });
   
   var shop = function() {
