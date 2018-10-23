@@ -1,5 +1,5 @@
-var mysql = require ('mysql');
-var inquirer = require ('inquirer');
+var mysql = require("mysql");
+var inquirer = require("inquirer");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -15,13 +15,15 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
 });
 
+//connect to mysql server
 connection.connect(function(err) {
   if (err) throw err;
   console.log("connected as id " + connection.threatId);
   console.log ("\nWELCOME TO BAMAZON!!!!!"+"\n"+"\n"+ "These are the items we have for sale:")
   console.log ("=========================================")
+  
   queryAllProducts();
-  start();
+  start ();
 });
 
 
@@ -38,38 +40,41 @@ var queryAllProducts = function () {
     console.log(query.sql);
 };
 
-function start() {
-    connection.query("SELECT * FROM products", function(err, results){
-      // if(err) throw err;
+var start = function() {
+  connection.query("SELECT * FROM products", function(err, results) {
+      if(err) throw err;
 
       inquirer
       .prompt([
-        {
-          name: "buyChoice",
-          type: "rawlist",
-          choices: function(){
+      {
+          name: "choice",
+          type: "list",
+          choices: function() {
             var choiceArray = [];
             for (var i = 0; i < results.length; i++){
-              choiceArray.push(results[i].product_id, results[i].product_name);
+              choiceArray.push(results[i]);
             }
             return choiceArray;
           },
           message: "What is the ID of the product your buying?"
-        },
-        {
+      },
+      {
           name: "productQuantityChoice",
           type: "input",
           message: "How many are you buying?"
-        },
-      ]).then(function(anwser) {
+      }
+    ])
+    .then(function(answer) {
+
         var productChosen;
-        for(var i = 0; i < results.length; i++){
-          if(results[i].product_id === anwser.buyChoice) {
-            // console.log("You chose the product" + results[i].product_name)
+        for(var i = 0; i < results.length; i++ ) {
+          if(results[i].product_id === answer.choice) {
             productChosen = results[i];
+            // console.log("You chose the product" + results[i].product_name);
+            console.log("You bought the " + productChosen)
           }
         }
-      });  
+      }) 
       //checking to see if the order meets the stock quantitiy
       // if (productChosen.stock_quantity >= parseInt(anwser.productQuantityChoice)) 
       // {
@@ -96,7 +101,7 @@ function start() {
       //   start();
       // }
     
-    });
+  });
 }
   
 
