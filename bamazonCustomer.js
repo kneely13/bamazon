@@ -1,6 +1,5 @@
-inquirer = require ('inquirer');
 var mysql = require ('mysql');
-
+var inquirer = require ('inquirer');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -14,10 +13,19 @@ var connection = mysql.createConnection({
     // Your password
     password: "root",
     database: "bamazon_db"
-  });
+});
+
+connection.connect(function(err) {
+  if (err) throw err;
+  console.log("connected as id " + connection.threatId);
+  console.log ("\nWELCOME TO BAMAZON!!!!!"+"\n"+"\n"+ "These are the items we have for sale:")
+  console.log ("=========================================")
+  queryAllProducts();
+  start();
+});
 
 
-  var queryAllProducts = function () {
+var queryAllProducts = function () {
     var query = connection.query('SELECT * FROM products', function (err, res) {
         console.log("\n"+"ID| " + "Item" + " | " + "Department" + " | " + "Price" + " | " + "Quantity In Stock" + " | ")
         console.log("-----------------------------------")
@@ -28,63 +36,67 @@ var connection = mysql.createConnection({
     });
 
     console.log(query.sql);
-  }
+};
 
-  connection.connect(function(err) {
-    if (err) throw err;
-    console.log("connected as id " + connection.threatId);
-    console.log ("\nWELCOME TO BAMAZON!!!!!"+"\n"+"\n"+ "These are the items we have for sale:")
-    console.log ("=========================================")
-    queryAllProducts();
-    console.log("Questions")
-    start();
-    
-    // connection.query('SELECT * FROM products', function (err, response) {
-    //     if(err) {
-    //         throw err
-    //     }
+function start() {
+    connection.query("SELECT * FROM products", function(err, results){
+      // if(err) throw err;
 
-    //     console.log(response)
-    // })
-
-    // connection.end();
-  });
-
-
-  function start() {
       inquirer
-      .prompt({
-          name: "buyingProducts",
-          type: "input",
+      .prompt([
+        {
+          name: "buyChoice",
+          type: "rawlist",
+          choices: function(){
+            var choiceArray = [];
+            for (var i = 0; i < results.length; i++){
+              choiceArray.push(results[i].product_id, results[i].product_name);
+            }
+            return choiceArray;
+          },
           message: "What is the ID of the product your buying?"
-        //   validate function(value) {
-        //       if (isNaN(value) === false) {
-        //           return true
-        //       } else {
-        //           return false;
-        //       }
-        //   }
-      })
-      .then(function(anwser) {
-          var idRequested = anwser.buyingProducts;
-        //   var productChosen = res[idRequested];
-        //   var quantityRequested = anwser.howManyProducts;
+        },
+        {
+          name: "productQuantityChoice",
+          type: "input",
+          message: "How many are you buying?"
+        },
+      ]).then(function(anwser) {
+        var productChosen;
+        for(var i = 0; i < results.length; i++){
+          if(results[i].product_id === anwser.buyChoice) {
+            // console.log("You chose the product" + results[i].product_name)
+            productChosen = results[i];
+          }
+        }
+      });  
+      //checking to see if the order meets the stock quantitiy
+      // if (productChosen.stock_quantity >= parseInt(anwser.productQuantityChoice)) 
+      // {
 
-              console.log ("You chose " + res[i].product_id);
-          
-          
-          
-      });
-  }
+      //   connection.query(
+      //     "UPDATE products SET ? WHERE ?",
+      //     [
+      //       {
+      //         stock_quantity: anwser.productChosen.stock_quantity -= anwser.productQuantityChoice
+      //       },
+      //       {
+      //         product_id: productChosen.product_id
+      //       }
+      //     ],
+      //     function(error) {
+      //       if(error) throw err;
+      //       console.log ("Your order has been placed! ");
+      //       console.log ("This is the new list with the updated stock quantity:" );
+      //     }
+      //   );
+        
+      // } else {
+      //   console.log ("Insufficient quantity! Your order could not be placed at this time.  Try again...");
+      //   start();
+      // }
+    
+    });
+}
   
 
-// name: "howManyProducts",
-            // type: "input",
-            // message: "How many of this product are you buying?",
-            // validate: function(value) {
-            //     if (isNaN(value) === false) {
-            //         return true
-            //     } else {
-            //         return false;
-            //     }
-            // }
