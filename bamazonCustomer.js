@@ -23,7 +23,7 @@ connection.connect(function(err) {
   console.log ("=========================================")
   
   queryAllProducts();
-  start ();
+  start();
 });
 
 
@@ -52,7 +52,7 @@ var start = function() {
           choices: function() {
             var choiceArray = [];
             for (var i = 0; i < results.length; i++){
-              choiceArray.push(results[i]);
+              choiceArray.push(results[i].product_name);
             }
             return choiceArray;
           },
@@ -61,7 +61,7 @@ var start = function() {
       {
           name: "productQuantityChoice",
           type: "input",
-          message: "How many are you buying?"
+          message:"How many are you buying?"
       }
     ])
     .then(function(answer) {
@@ -69,38 +69,38 @@ var start = function() {
         var productChosen;
         for(var i = 0; i < results.length; i++ ) {
           if(results[i].product_id === answer.choice) {
-            productChosen = results[i];
+            productChosen = results[i].choice;
             // console.log("You chose the product" + results[i].product_name);
-            console.log("You bought the " + productChosen)
+            console.log("You bought the " + productChosen);
           }
         }
-      }) 
+       
       //checking to see if the order meets the stock quantitiy
-      // if (productChosen.stock_quantity >= parseInt(anwser.productQuantityChoice)) 
-      // {
+      if (productChosen.stock_quantity > (answer.productQuantityChoice)) {
 
-      //   connection.query(
-      //     "UPDATE products SET ? WHERE ?",
-      //     [
-      //       {
-      //         stock_quantity: anwser.productChosen.stock_quantity -= anwser.productQuantityChoice
-      //       },
-      //       {
-      //         product_id: productChosen.product_id
-      //       }
-      //     ],
-      //     function(error) {
-      //       if(error) throw err;
-      //       console.log ("Your order has been placed! ");
-      //       console.log ("This is the new list with the updated stock quantity:" );
-      //     }
-      //   );
+
+        connection.query(
+          "UPDATE products SET ? WHERE ?",
+          [
+            {
+              stock_quantity: answer.productQuantityChoice
+            },
+            {
+              product_id: productChosen.product_id
+            }
+          ],
+          function(error) {
+            if(error) throw err;
+            console.log ("Your order has been placed! ");
+            console.log ("This is the new list with the updated stock quantity:" );
+          }
+        );
         
-      // } else {
-      //   console.log ("Insufficient quantity! Your order could not be placed at this time.  Try again...");
-      //   start();
-      // }
-    
+      } else {
+        console.log ("Insufficient quantity! Your order could not be placed at this time.  Try again...");
+        start();
+      }
+    })
   });
 }
   
