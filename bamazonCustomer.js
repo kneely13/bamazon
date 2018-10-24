@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
+
 var connection = mysql.createConnection({
     host: "localhost",
   
@@ -56,7 +57,7 @@ var start = function() {
             }
             return choiceArray;
           },
-          message: "What is the ID of the product your buying?"
+          message: "What product your buying?"
       },
       {
           name: "productQuantityChoice",
@@ -68,38 +69,27 @@ var start = function() {
 
         var productChosen;
         for(var i = 0; i < results.length; i++ ) {
-          if(results[i].product_id === answer.choice) {
-            productChosen = results[i].choice;
-            // console.log("You chose the product" + results[i].product_name);
-            console.log("You bought the " + productChosen);
+          if(results[i].product_name === answer.choice) {
+            productChosen = answer.choice;
+            quantityPurchased = answer.productQuantityChoice; 
+            console.log("You chose "+ quantityPurchased +" "+ productChosen + "'s.");
+            stockLeft =results[i].stock_quantity - quantityPurchased;
+            console.log("The stock left for item '"+productChosen+ "' is " + stockLeft)
+            var query = "UPDATE products" ;
+            
+            // var stockLeft = results[i].stock_quantity - answer.productQuantityChoice; 
+          }else{
+            console.log("Sorry, insufficent funds. Try again...")
           }
         }
        
+
       //checking to see if the order meets the stock quantitiy
-      if (productChosen.stock_quantity > (answer.productQuantityChoice)) {
-
-
-        connection.query(
-          "UPDATE products SET ? WHERE ?",
-          [
-            {
-              stock_quantity: answer.productQuantityChoice
-            },
-            {
-              product_id: productChosen.product_id
-            }
-          ],
-          function(error) {
-            if(error) throw err;
-            console.log ("Your order has been placed! ");
-            console.log ("This is the new list with the updated stock quantity:" );
-          }
-        );
-        
-      } else {
-        console.log ("Insufficient quantity! Your order could not be placed at this time.  Try again...");
-        start();
-      }
+      //   if (productChosen.stock_quantity > (answer.productQuantityChoice)) {
+      //      console.log(stockLeft);
+      //   }else{
+      // console.log("Insufficient order, please try again");
+      //   }
     })
   });
 }

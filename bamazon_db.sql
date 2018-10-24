@@ -5,6 +5,7 @@ USE bamazon_db;
 
 DROP TABLE IF EXISTS products;
 
+
 CREATE TABLE products (
   product_id INT NOT NULL AUTO_INCREMENT,
   product_name VARCHAR (45) NULL,
