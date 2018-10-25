@@ -78,9 +78,8 @@ var start = function() {
             var query = "UPDATE products" ;
             
             // var stockLeft = results[i].stock_quantity - answer.productQuantityChoice; 
-          }else{
-            console.log("Sorry, insufficent funds. Try again...")
-          }
+          
+          } 
         }
        
 
@@ -94,4 +93,5 @@ var start = function() {
   });
 }
   
+
 
